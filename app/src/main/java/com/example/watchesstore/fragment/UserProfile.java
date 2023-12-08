@@ -172,7 +172,7 @@ public class UserProfile extends Fragment {
         Map<String, Object> userDetail = new HashMap<>();
         userDetail.put("userName", userName);
         userDetail.put("address", address);
-        userDetail.put("phonenumber", phoneNumber);
+        userDetail.put("phoneNumber", phoneNumber);
 
         FirebaseFirestore fStore = FirebaseFirestore.getInstance();
         fStore.collection("Users").whereEqualTo("email",email).get()
@@ -213,7 +213,7 @@ public class UserProfile extends Fragment {
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                     edEmail.setText(value.getString("email"));
                     edUserName.setText(value.getString("userName"));
-                    edPhoneNumber.setText(value.getString("phonenumber"));
+                    edPhoneNumber.setText(value.getString("phoneNumber"));
                     edAddress.setText(value.getString("address"));
 
                     Log.d("TEST",edUserName.getText().toString() );

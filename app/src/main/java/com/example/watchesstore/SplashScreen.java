@@ -22,7 +22,7 @@ public class SplashScreen extends AppCompatActivity {
             public void run() {
                 nextActivity();
             }
-        },3000);
+        },1500);
     }
     private void nextActivity(){
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
@@ -38,4 +38,5 @@ public class SplashScreen extends AppCompatActivity {
         }
         finish();
     }
+
 }

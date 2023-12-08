@@ -109,7 +109,7 @@ public class Signup extends AppCompatActivity {
                                 Map<String, Object> userInfo = new HashMap<>();
                                 userInfo.put("userName", edUserName.getText().toString());
                                 userInfo.put("email", edEmail.getText().toString());
-                                userInfo.put("phonenumber", edPhoneNumber.getText().toString());
+                                userInfo.put("phoneNumber", edPhoneNumber.getText().toString());
                                 userInfo.put("address", edAddress.getText().toString());
                                 userInfo.put("isUser", "1");
                                 df.set(userInfo);

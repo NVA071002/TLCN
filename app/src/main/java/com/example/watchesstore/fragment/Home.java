@@ -340,8 +340,13 @@ public class Home extends Fragment {
 
     }
     public void showUserInformation(){
+
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
         if(user==null){
+            btnSignOut.setText("Sign In");
+            tvEmail.setText("Please Log In");
+            tvUserName.setText("For Better Experience");
+
             return;
         }
         else{
@@ -349,7 +354,7 @@ public class Home extends Fragment {
             String email = user.getEmail();
             Uri photoUrl = user.getPhotoUrl();
             if(name==null){
-                tvUserName.setVisibility(View.GONE);
+                tvUserName.setText("Hello User");
             }
             else {
                 tvUserName.setVisibility(View.VISIBLE);

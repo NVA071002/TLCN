@@ -128,7 +128,7 @@ public class MyCart extends AppCompatActivity {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             FirebaseUser user = mAuth.getCurrentUser();
             FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-            CollectionReference invoicesCollection = fStore.collection("Users").document(user.getUid()).collection("invoices");
+            CollectionReference invoicesCollection = fStore.collection("AllInvoices").document(user.getUid()).collection("invoices");
 
             invoicesCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -146,17 +146,18 @@ public class MyCart extends AppCompatActivity {
                         Log.d("NEW INDEX", String.valueOf(newInvoiceIndex));
 
                         Map<String, Object> newInvoice = new HashMap<>();
-                        newInvoice.put("User Email", user.getEmail());
+                        newInvoice.put("userEmail", user.getEmail());
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
+                        List<ItemsCart> listItemCart = new ArrayList<>();
                         for (int i = 0; i < cartList.size(); i++) {
-                            newInvoice.put("Product Name" + i, cartList.get(i).getProductName());
-                            newInvoice.put("Quantity Of: " + cartList.get(i).getProductName(), cartList.get(i).getTotalQuantity());
-                            newInvoice.put("Date", dtf.format(now));
-
                             totalPrice += cartList.get(i).getTotalPrice();
                         }
-                        newInvoice.put("Total Price", String.valueOf(totalPrice));
+                        newInvoice.put("date", dtf.format(now));
+                        newInvoice.put("totalPrice", String.valueOf(totalPrice));
+                        newInvoice.put("listProduct", cartList);
+                        newInvoice.put("status", "Awaiting store confirmation.");
+
 
                         invoicesCollection.document(String.valueOf(newInvoiceIndex))
                                 .set(newInvoice)

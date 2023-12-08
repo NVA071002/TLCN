@@ -196,28 +196,30 @@ public class MenuSelection extends AppCompatActivity {
     private void getQuantityInCart(){
 
         FirebaseUser mAuth= FirebaseAuth.getInstance().getCurrentUser();
-        String id=mAuth.getUid();
-        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                total= (int) snapshot.getChildrenCount();
-                //set quantity having in cart
-                //because of this way, updateCount function(with runable) no longer useful.
-                if(total==0){
-                    badge.setVisibility(View.INVISIBLE);
+        if(mAuth!=null){
+            String id=mAuth.getUid();
+            DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    total= (int) snapshot.getChildrenCount();
+                    //set quantity having in cart
+                    //because of this way, updateCount function(with runable) no longer useful.
+                    if(total==0){
+                        badge.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        badge.setVisibility(View.VISIBLE);
+                        badge.setText(String.valueOf(total));
+                    }
                 }
-                else{
-                    badge.setVisibility(View.VISIBLE);
-                    badge.setText(String.valueOf(total));
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+            });
+        }
 
     }
 
@@ -234,13 +236,13 @@ public class MenuSelection extends AppCompatActivity {
             @Override
             public void run() {
                 getQuantityInCart();
-//                if(total==0){
-//                    badge.setVisibility(View.INVISIBLE);
-//                }
-//                else{
-//                    badge.setVisibility(View.VISIBLE);
-//                    badge.setText(String.valueOf(total));
-//                }
+                if(total==0){
+                    badge.setVisibility(View.INVISIBLE);
+                }
+                else{
+                    badge.setVisibility(View.VISIBLE);
+                    badge.setText(String.valueOf(total));
+                }
             }
         });
     }
