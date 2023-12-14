@@ -12,6 +12,7 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.ShoesStore"
         tools:targetApi="31">
         <activity
@@ -52,6 +53,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <activity android:name="com.example.watchesstore.CheckOut" />
+        <activity android:name="com.example.watchesstore.PurchasedHistory" />
     </application>
 
 </manifest>

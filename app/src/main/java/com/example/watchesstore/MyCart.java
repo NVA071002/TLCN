@@ -45,6 +45,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class MyCart extends AppCompatActivity {
     private DatabaseReference databaseReference;
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
-    List<ItemsCart> cartList;
+    List<ItemsCart> cartList = new ArrayList<>();
     private TextView tvTotalPrice;
     private Button btnCheckOut;
     Toolbar toolbar;
@@ -76,7 +77,9 @@ public class MyCart extends AppCompatActivity {
                 checkChange = (int) bundle.get("checkChange");
             }
             if (itemsCart != null) {
-                openSheetDialog();
+//                openSheetDialog();
+                                removeItem();
+
             }
 
         }
@@ -87,10 +90,9 @@ public class MyCart extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_cart);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("send_totalPrice"));
-        initUi();
         showListItems();
+        initUi();
         initListener();
-
     }
 
     private void initUi() {
@@ -100,7 +102,6 @@ public class MyCart extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MyCart.this, RecyclerView.VERTICAL, false));
         //Cart
-        cartList = new ArrayList<>();
         cartAdapter = new CartAdapter(MyCart.this, cartList);
         recyclerView.setAdapter(cartAdapter);
         //toolbar
@@ -114,88 +115,53 @@ public class MyCart extends AppCompatActivity {
         btnCheckOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkOut();
+                if (checkOut()) {
+                    Intent intent = new Intent(MyCart.this, CheckOut.class);
+                    intent.putExtra("totalPrice", totalPriceOfCart);
+                    intent.putExtra("cart", (Serializable) cartList);
+                    startActivity(intent);
+                }
             }
+
         });
     }
 
-    private void checkOut() {
+    private boolean checkOut() {
         if (cartList.isEmpty()){
             Toast.makeText(this, "CART IS EMPTY",
                     Toast.LENGTH_SHORT).show();
-        }else {
-
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            FirebaseUser user = mAuth.getCurrentUser();
-            FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-            CollectionReference invoicesCollection = fStore.collection("AllInvoices").document(user.getUid()).collection("invoices");
-
-            invoicesCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        int newInvoiceIndex = 0;
-                        int totalPrice = 0;
-
-                        if (task.getResult().size() == 0) {
-                            newInvoiceIndex = 1;
-                        } else {
-                            newInvoiceIndex = task.getResult().size() + 1;
-                        }
-                        Log.d("NEW INDEX", String.valueOf(newInvoiceIndex));
-
-                        Map<String, Object> newInvoice = new HashMap<>();
-                        newInvoice.put("userEmail", user.getEmail());
-                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                        LocalDateTime now = LocalDateTime.now();
-                        List<ItemsCart> listItemCart = new ArrayList<>();
-                        for (int i = 0; i < cartList.size(); i++) {
-                            totalPrice += cartList.get(i).getTotalPrice();
-                        }
-                        newInvoice.put("date", dtf.format(now));
-                        newInvoice.put("totalPrice", String.valueOf(totalPrice));
-                        newInvoice.put("listProduct", cartList);
-                        newInvoice.put("status", "Awaiting store confirmation.");
-
-
-                        invoicesCollection.document(String.valueOf(newInvoiceIndex))
-                                .set(newInvoice)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Log.d("NEW INVOICE", "Document added with index: ");
-                                    }
-                                });
-                    }
-                }
-            });
-
+            return false;
         }
+        return true;
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cartAdapter.notifyDataSetChanged();
 
-    private void openSheetDialog() {
-        View viewDialog = getLayoutInflater().inflate(R.layout.bottom_sheet_confirm_delete, null);
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        bottomSheetDialog.setContentView(viewDialog);
-        bottomSheetDialog.show();
-//        bottomSheetDialog.setCancelable(false);//dung de chan nguoi dung tat dialog nay di (= scroll/ click ra ngoai...)
-        Button btnCancel = viewDialog.findViewById(R.id.btnCancel);
-        Button btnRemove = viewDialog.findViewById(R.id.btnRemove);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-        btnRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                removeItem();
-                bottomSheetDialog.dismiss();
-            }
-        });
     }
+//    private void openSheetDialog() {
+//        View viewDialog = getLayoutInflater().inflate(R.layout.bottom_sheet_confirm_delete, null);
+//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+//        bottomSheetDialog.setContentView(viewDialog);
+//        bottomSheetDialog.show();
+////        bottomSheetDialog.setCancelable(false);//dung de chan nguoi dung tat dialog nay di (= scroll/ click ra ngoai...)
+//        Button btnCancel = viewDialog.findViewById(R.id.btnCancel);
+//        Button btnRemove = viewDialog.findViewById(R.id.btnRemove);
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//        btnRemove.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                removeItem();
+//                bottomSheetDialog.dismiss();
+//            }
+//        });
+//    }
 
     private void showListItems() {
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
@@ -210,9 +176,6 @@ public class MyCart extends AppCompatActivity {
                     //set TotalPrice for MyCart page
                     totalPriceOfCart += item.getTotalPrice();
                     tvTotalPrice.setText("$ " + String.valueOf(totalPriceOfCart));
-
-
-
                 }
                 cartAdapter.notifyDataSetChanged();
             }
@@ -221,9 +184,9 @@ public class MyCart extends AppCompatActivity {
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 ItemsCart cat = snapshot.getValue(ItemsCart.class);
                 if (cat == null || cartList == null || cartList.isEmpty()) {
+                    cartAdapter.notifyDataSetChanged();
                     return;
                 }
-
                 for (int i = 0; i < cartList.size(); i++) {
                     //dua vao name de thay doi image.
                     if (cat.getId() == cartList.get(i).getId()) {
@@ -275,8 +238,8 @@ public class MyCart extends AppCompatActivity {
                         cartList.remove(itemsCart);
                         totalPriceOfCart -= itemsCart.getTotalPrice();
                         tvTotalPrice.setText("$ " + String.valueOf(totalPriceOfCart));
+                        data.getRef().removeValue();
                     }
-
                 }
                 cartAdapter.notifyDataSetChanged();
             }

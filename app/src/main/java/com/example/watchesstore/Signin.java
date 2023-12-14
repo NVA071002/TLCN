@@ -72,7 +72,7 @@ public class Signin extends AppCompatActivity {
         progressDialog.show();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         //should create a layout for users input email
-        String emailAddress = "destiny@gmail.com";
+        String emailAddress = edUserName.getText().toString();
         //Hien tai dang bi loi khong nhan dc mail (do firebase chang ?)
         //fix sau :v
         auth.sendPasswordResetEmail(emailAddress)

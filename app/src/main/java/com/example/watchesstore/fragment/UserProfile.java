@@ -25,7 +25,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import com.example.watchesstore.CheckOut;
 import com.example.watchesstore.MenuSelection;
+import com.example.watchesstore.MyCart;
+import com.example.watchesstore.PurchasedHistory;
 import com.example.watchesstore.R;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +56,7 @@ public class UserProfile extends Fragment {
     private View mView;
     private ImageView imgAvatar;
     private EditText edUserName,edEmail,edPhoneNumber, edAddress;
-    private Button btnUpdateUserProfile;
+    private Button btnUpdateUserProfile, btnHistory;
     private Uri seletedImage;
     private ProgressDialog dialog;
 
@@ -96,7 +100,7 @@ public class UserProfile extends Fragment {
         edPhoneNumber=mView.findViewById(R.id.edPhoneNumber);
 
         edEmail=mView.findViewById(R.id.edEmail);
-
+        btnHistory=mView.findViewById(R.id.btnHistory);
         btnUpdateUserProfile=mView.findViewById(R.id.btnUpdateProfile);
         dialog=new ProgressDialog(getActivity());
 
@@ -123,8 +127,16 @@ public class UserProfile extends Fragment {
         btnUpdateUserProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 onClickUpdateProfile();
+            }
+        });
+
+        btnHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), PurchasedHistory.class);
+
+                startActivity(intent);
             }
         });
     }

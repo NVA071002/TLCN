@@ -111,7 +111,7 @@ public class Signup extends AppCompatActivity {
                                 userInfo.put("email", edEmail.getText().toString());
                                 userInfo.put("phoneNumber", edPhoneNumber.getText().toString());
                                 userInfo.put("address", edAddress.getText().toString());
-                                userInfo.put("isUser", "1");
+                                userInfo.put("isUser", 1);
                                 df.set(userInfo);
                                 startActivity(i);
 

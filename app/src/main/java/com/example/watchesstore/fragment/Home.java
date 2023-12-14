@@ -283,12 +283,15 @@ public class Home extends Fragment {
     }
     private void showProduct(){
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("Products");
+        int count =0;
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Product product=snapshot.getValue(Product.class);
                 if(product!=null){
-                    productList.add(product);
+                    if (productList.size()<5) {
+                        productList.add(product);
+                    }
                 }
                 productAdapter.notifyDataSetChanged();
                 //show home layout and close dialog

@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,9 +105,6 @@ public class MenuSelection extends AppCompatActivity {
         toolbar=findViewById(R.id.tb_menu);
         setSupportActionBar(toolbar);
 
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_nav_home); dung de add icon o dau toolbar
-
 
     }
 
@@ -114,8 +112,10 @@ public class MenuSelection extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
        getMenuInflater().inflate(R.menu.home_menu,menu);
+
        menuView=menu.findItem(R.id.menu_cart).getActionView();
        badge=menuView.findViewById(R.id.badge);
+       Log.d("badge", "badge AFTERRR");
        cartLayout=menuView.findViewById(R.id.cart_layout);
 
 //       updateCartCount();
@@ -202,6 +202,7 @@ public class MenuSelection extends AppCompatActivity {
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                     total= (int) snapshot.getChildrenCount();
                     //set quantity having in cart
                     //because of this way, updateCount function(with runable) no longer useful.

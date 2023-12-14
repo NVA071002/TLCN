@@ -12,15 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="My Cart" />
+        app:title="Purchased History " />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rec_ShowMyCart"
+        android:id="@+id/rec_ShowInvoice"
         android:layout_width="match_parent"
         android:layout_height="650dp"
         android:layout_below="@+id/tb_cart"
-        tools:listitem="@layout/items_cart"
-        app:layout_constraintTop_toBottomOf="@+id/tb_cart" />
+        app:layout_constraintTop_toBottomOf="@+id/tb_cart"
+        tools:layout_editor_absoluteX="0dp"
+        tools:listitem="@layout/invoice_history" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -37,38 +38,15 @@
 
             android:background="@color/gray">
 
-            <TextView
-                android:id="@+id/textView9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="19dp"
-                android:layout_marginTop="13dp"
-                android:text="Total price" />
-
-            <TextView
-                android:id="@+id/tvTotalPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="13dp"
-                android:layout_marginTop="45dp"
-                android:text="Price"
-                android:textSize="25dp"
-                android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnCheckOut"
+                android:id="@+id/btnBack"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="152dp"
                 android:layout_marginTop="10dp"
-                android:text="Check Out" />
+                android:text="Back" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
