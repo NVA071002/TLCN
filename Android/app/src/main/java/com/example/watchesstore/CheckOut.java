@@ -133,7 +133,9 @@ public class CheckOut extends AppCompatActivity {
                                     Log.d("NEW INVOICE", "Document added with index: ");
                                     deleteCartData(user.getUid());
                                     updateUserInfoInFireStore(user.getEmail(), edAddress.getText().toString(), edPhone.getText().toString());
-                                    finish();
+//                                    finish();
+                                    Intent i=new Intent(CheckOut.this ,MenuSelection.class);
+                                    startActivity(i);
                                 }
                             });
                 }

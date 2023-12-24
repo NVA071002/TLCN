@@ -76,9 +76,14 @@ public class DetailedProduct extends AppCompatActivity {
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        if(user==null){
+            Toast.makeText(DetailedProduct.this, "Please Login First", Toast.LENGTH_LONG).show();
+
+        }
+        else{
                 addToCart2();
-            }
+            }}
         });
         imgPlus.setOnClickListener(new View.OnClickListener() {
             @Override

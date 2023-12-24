@@ -76,7 +76,14 @@ public class ProductService {
     public String updateProduct(Product product){
 
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Products");
-        ApiFuture<Void> future=databaseReference.child(String.valueOf(product.getId())).updateChildrenAsync((Map<String, Object>) product);
+        Map<String,Object> tmp=new HashMap<>();
+        tmp.put("id",product.getId());
+        tmp.put("name",product.getName());
+        tmp.put("price",product.getPrice());
+        tmp.put("description",product.getDescription());
+        tmp.put("imageUrl",product.getImageUrl());
+        tmp.put("type",product.getType());
+        ApiFuture<Void> future=databaseReference.child(String.valueOf(product.getId())).updateChildrenAsync(tmp);
         try {
             // Wait for the operation to complete
             future.get();
@@ -88,9 +95,18 @@ public class ProductService {
         }
     }
     public void deleteProduct(int id){
-        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Products");
-        //completeListener.
-        databaseReference.child(String.valueOf(id)).removeValueAsync();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products");
+        databaseReference.child(String.valueOf(id)).removeValue(new DatabaseReference.CompletionListener() {
 
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    System.out.println("Data could not be deleted: " + databaseError.getMessage());
+                } else {
+                    System.out.println("Data deleted successfully.");
+                }
+            }
+        });
     }
+
 }

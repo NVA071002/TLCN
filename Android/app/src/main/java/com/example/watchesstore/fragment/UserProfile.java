@@ -106,46 +106,54 @@ public class UserProfile extends Fragment {
 
     }
     private void initListener() {
-        imgAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+
+        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        if(user==null){
+            //not logged login
+
+        }
+        else {
+            imgAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 //                openClickRequestPermission(); dung update profile nhung da dung ImagePicker thay the.
 
-                ImagePicker.with(UserProfile.this)
+                    ImagePicker.with(UserProfile.this)
 //                        .crop()	    			//Crop image(Optional), Check Customization for more option
 //                        .compress(1024)			//Final image size will be less than 1 MB(Optional)
 //                        .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
-                        //kiểm tra thử xem có ask permission trước không
-                        //nếu không thì xem xét dùng lại hàm openClickRequestPermission
-                        .createIntent(intent -> {
-                            mActivityResult.launch(intent);
-                            return null;
-                        });
+                            //kiểm tra thử xem có ask permission trước không
+                            //nếu không thì xem xét dùng lại hàm openClickRequestPermission
+                            .createIntent(intent -> {
+                                mActivityResult.launch(intent);
+                                return null;
+                            });
 
-            }
-        });
-        btnUpdateUserProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickUpdateProfile();
-            }
-        });
+                }
+            });
+            btnUpdateUserProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onClickUpdateProfile();
+                }
+            });
 
-        btnHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), PurchasedHistory.class);
+            btnHistory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), PurchasedHistory.class);
 
-                startActivity(intent);
-            }
-        });
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     private void onClickUpdateProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user==null){
-            return;
-        }
+            Toast.makeText(getActivity(), "Please Login first",
+                    Toast.LENGTH_SHORT).show();        }
         dialog.show();
         //dieu chinh lai phan nay de hop ly khi nguoi dung chi click update ma khong
         //them bat cu thong tin gi
@@ -214,12 +222,14 @@ public class UserProfile extends Fragment {
 
     private void setUserInformation() {
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-        DocumentReference docRef = fStore.collection("Users").document(user.getUid());
         if(user ==null){
             return;
         }
         else{
+        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
+        DocumentReference docRef = fStore.collection("Users").document(user.getUid());
+
+
             docRef.addSnapshotListener( new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {

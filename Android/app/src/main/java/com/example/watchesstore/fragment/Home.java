@@ -1,5 +1,7 @@
 package com.example.watchesstore.fragment;
 
+import static androidx.core.app.ActivityCompat.finishAffinity;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -127,9 +129,19 @@ public class Home extends Fragment {
         btnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        if(user==null){
+            //not logged login
+            btnSignOut.setText("Sign In");
+            Intent i=new Intent(getActivity(),Signin.class);
+
+            startActivity(i);
+        }
                 FirebaseAuth.getInstance().signOut();
                 Intent i=new Intent(getActivity(),Signin.class);
+
                 startActivity(i);
+
 
             }
         });
@@ -350,7 +362,6 @@ public class Home extends Fragment {
             tvEmail.setText("Please Log In");
             tvUserName.setText("For Better Experience");
 
-            return;
         }
         else{
             String name = user.getDisplayName();

@@ -106,7 +106,6 @@ public class Signin extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Intent i=new Intent(Signin.this,MenuSelection.class);
                             startActivity(i);
-                            finishAffinity();
 
                         } else {
                             // If sign in fails, display a message to the user.

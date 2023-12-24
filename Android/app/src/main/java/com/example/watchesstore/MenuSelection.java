@@ -63,8 +63,8 @@ public class MenuSelection extends AppCompatActivity {
         bottomNavigation=findViewById(R.id.bottomNav);
         //push view up when keyboard appears
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        getQuantityInCart();
         initNavBar();
+
         initUI();
 
     }
@@ -89,9 +89,9 @@ public class MenuSelection extends AppCompatActivity {
                     case 0:
                         bottomNavigation.show(1,true);
                         break;
-                    case 1:
-                        bottomNavigation.show(2,true);
-                        break;
+//                    case 1:
+//                        bottomNavigation.show(2,true);
+//                        break;
                     case 2:
                         bottomNavigation.show(4,true);
                         break;
@@ -107,32 +107,39 @@ public class MenuSelection extends AppCompatActivity {
 
 
     }
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu,menu);
 
-       getMenuInflater().inflate(R.menu.home_menu,menu);
-
-       menuView=menu.findItem(R.id.menu_cart).getActionView();
-       badge=menuView.findViewById(R.id.badge);
-       Log.d("badge", "badge AFTERRR");
-       cartLayout=menuView.findViewById(R.id.cart_layout);
+        menuView=menu.findItem(R.id.menu_cart).getActionView();
+        badge=menuView.findViewById(R.id.badge);
+        Log.d("badge", "badge AFTERRR");
+        cartLayout=menuView.findViewById(R.id.cart_layout);
 
 //       updateCartCount();
 
-       MenuItem menuItem=menu.findItem(R.id.menu_cart);
-       cartLayout.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               onOptionsItemSelected(menuItem);
-           }
-       });
-        Toast.makeText(this, "dang hoat dong", Toast.LENGTH_SHORT).show();
-
-       return true;
-
+        MenuItem menuItem=menu.findItem(R.id.menu_cart);
+        cartLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+                if(user==null){
+                    //not logged login
+//                Toast.makeText(this, "dang hoat dong", Toast.LENGTH_SHORT).show();
+                }else{
+//
+                    onOptionsItemSelected(menuItem);
+                }}
+        });
+        getQuantityInCart();
+        return super.onCreateOptionsMenu(menu);
     }
 
+@Override
+protected void onResume() {
+    super.onResume();
+    invalidateOptionsMenu();
+}
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id=item.getItemId();
@@ -146,8 +153,7 @@ public class MenuSelection extends AppCompatActivity {
 
     private void initNavBar() {
         bottomNavigation.add(new MeowBottomNavigation.Model(ID_HOME, R.drawable.ic_nav_home));
-        bottomNavigation.add(new MeowBottomNavigation.Model(ID_CART,R.drawable.ic_nav_cart));
-//        bottomNavigation.add(new MeowBottomNavigation.Model(ID_NOTIFICATION,R.drawable.ic_nav_home));
+//        bottomNavigation.add(new MeowBottomNavigation.Model(ID_CART,R.drawable.ic_nav_cart));
         bottomNavigation.add(new MeowBottomNavigation.Model(ID_ACCOUNT,R.drawable.ic_nav_user));
 
         bottomNavigation.setOnClickMenuListener(new Function1<MeowBottomNavigation.Model, Unit>() {
@@ -156,12 +162,9 @@ public class MenuSelection extends AppCompatActivity {
                 switch (model.getId()){
                     case ID_HOME:
                         break;
-                    case ID_CART:
-                        break;
-//                    case ID_MESSAGE:
+//                    case ID_CART:
 //                        break;
-//                    case ID_NOTIFICATION:
-//                        break;
+
                     case ID_ACCOUNT:
                         break;
                 }
@@ -177,10 +180,10 @@ public class MenuSelection extends AppCompatActivity {
                         viewPager2.setCurrentItem(0);
                         toolbar.setTitle("Home");
                         break;
-                    case ID_CART:
-                        viewPager2.setCurrentItem(1);
-                        toolbar.setTitle("Cart");
-                        break;
+//                    case ID_CART:
+//                        viewPager2.setCurrentItem(1);
+//                        toolbar.setTitle("Cart");
+//                        break;
 //                    case ID_NOTIFICATION:
 //                        break;
                     case ID_ACCOUNT:
@@ -221,32 +224,23 @@ public class MenuSelection extends AppCompatActivity {
                 }
             });
         }
+        else {
+            badge.setVisibility(View.INVISIBLE);
+
+        }
+
+
 
     }
 
     @Override
     protected void onStart() {
 //        updateCartCount();
+        invalidateOptionsMenu();
+
         super.onStart();
     }
-    private void updateCartCount() {
-        if(badge==null){
-            return;
-        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getQuantityInCart();
-                if(total==0){
-                    badge.setVisibility(View.INVISIBLE);
-                }
-                else{
-                    badge.setVisibility(View.VISIBLE);
-                    badge.setText(String.valueOf(total));
-                }
-            }
-        });
-    }
+
 
     //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

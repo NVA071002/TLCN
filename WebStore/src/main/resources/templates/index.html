@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
     <link th:href="@{/css/popup.css}" rel="stylesheet"/>
+    <link th:href="@{/css/invoice.css}" rel="stylesheet"/>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -18,7 +20,7 @@
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" th:href="@{/product}">Start Bootstrap</a>
+    <a class="navbar-brand ps-3" th:href="@{/product}">Group 20</a>
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
             class="fas fa-bars"></i></button>
@@ -73,7 +75,7 @@
             </div>
             <div class="sb-sidenav-footer">
                 <div class="small">Logged in as:</div>
-                Start Bootstrap
+                Group 20
             </div>
         </nav>
     </div>
@@ -117,19 +119,7 @@
                         </form>
                     </div>
                 </div>
-                <div id="editPopupForm" class="popup-form" style="display:none;">
-                    <div class="form-content">
-                        <span class="close-btn" onclick="closeForm()">&times;</span>
-                        <h2>Edit Product</h2>
-                        <form>
-                            <label for="productId1">Product ID:</label>
-                            <input type="text" id="productId1" name="productId" readonly><br><br>
 
-
-                            <input type="submit" value="Update">
-                        </form>
-                    </div>
-                </div>
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
@@ -167,10 +157,38 @@
                                 <td th:text="${product.type}"></td>
                                 <td>
                                     <button class="delete-btn" th:value="${product.id}">Delete</button>
-                                    <button class="editProductBtn" style="margin-bottom:1%">Edit</button>
+                                    <button class="details-btn"
+                                            th:data-id="${product.id}"
+                                            th:data-name="${product.name}"
+                                            th:data-description="${product.description}"
+                                            th:data-price="${product.price}"
+                                            th:data-type="${product.type}"
+                                            th:data-imgageUrl="${product.imageUrl}"
+                                    >Details</button>
                                 </td>
 
                             </tr>
+                            <div id="productModal" class="modal">
+                                <div class="modal-content">
+                                    <span class="close">&times;</span>
+                                    <h2>Product Details</h2>
+                                    <label>Product Id:</label>
+                                    <input id="pId" ></input>
+                                    <label>Product Name:</label>
+                                    <input id="pName" ></input>
+                                    <label>Product Description:</label>
+                                    <input id="pDescription" ></input>
+                                    <label>Product Price:</label>
+                                    <input id="pPrice" ></input>
+                                    <label>Product Type:</label>
+                                    <input id="pType" ></input>
+                                    <label>Product Image URL:</label>
+                                    <input id="pImageUrl" ></input>
+                                    <button id="submitProductUpdate">Update</button>
+
+                                </div>
+                            </div>
+
 
                             </tbody>
                         </table>
@@ -187,7 +205,101 @@
             </div>
         </footer>
     </div>
+    <script>
+        document.getElementById('submitProductUpdate').addEventListener('click', function() {
+            var id = document.getElementById('pId').value;
+            var name = document.getElementById('pName').value;
+            var description = document.getElementById('pDescription').value;
+            var price = document.getElementById('pPrice').value;
+            var type = document.getElementById('pType').value;
+            var imageUrl = document.getElementById('pImageUrl').value;
 
+
+
+            let formData = {
+                id: id,
+                name: name,
+                description:description,
+                price:price,
+                type:type,
+                imageUrl:imageUrl
+            };
+            // var csrfToken = $("meta[name='_csrf']").attr("content");
+            // var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+            $.ajax({
+                url: '/product',
+                method: 'put',
+                // Replace with your API endpoint
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                // beforeSend: function(xhr) {
+                //     xhr.setRequestHeader(csrfHeader, csrfToken);},
+                success: function (response) {
+                    // Handle success
+                    $('#successMessage').show().text('Updated successfully!');
+                    setTimeout(function () {
+                        $('#successMessage').hide();
+                        window.location.reload()
+                    }, 3000);
+                },
+                error: function () {
+                    // Handle error
+                    alert('Failed to Update Please try again.');
+                }
+            });
+            $('#productModal').hide();
+        });
+    </script>
+    <script>
+        document.addEventListener('click', function (event) {
+            // Check if the clicked element has the class 'details-btn'
+            if (event.target.classList.contains('details-btn')) {
+                var button = event.target;
+
+                var id = button.getAttribute('data-id');
+                var name = button.getAttribute('data-name');
+                var description = button.getAttribute('data-description');
+                var price = button.getAttribute('data-price');
+                var type = button.getAttribute('data-type');
+                var imageUrl = button.getAttribute('data-imageUrl');
+
+
+                showUserDetails(id,name,description,price,type,imageUrl);
+            }
+        });
+        // When the user clicks on a row button, open the modal and populate it with data
+        function showUserDetails(id,name,description,price,type,imageUrl) {
+            document.getElementById('pId').value =  id;
+            document.getElementById('pName').value =  name;
+            document.getElementById('pDescription').value = description;
+            document.getElementById('pPrice').value = price;
+            document.getElementById('pType').value = type;
+            document.getElementById('pImageUrl').value = imageUrl;
+
+
+            document.getElementById('productModal').style.display = "block";
+        }
+
+        // Get the modal
+        var modal = document.getElementById('productModal');
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
     <script>
         $(document).ready(function () {
             $('#createProductForm').submit(function (event) {

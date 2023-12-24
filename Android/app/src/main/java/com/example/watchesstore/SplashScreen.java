@@ -26,16 +26,16 @@ public class SplashScreen extends AppCompatActivity {
     }
     private void nextActivity(){
         FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
-        if(user==null){
-            //not logged login
-            Intent i=new Intent(SplashScreen.this,Signin.class);
-            startActivity(i);
-        }
-        else{
+//        if(user==null){
+//            //not logged login
+//            Intent i=new Intent(SplashScreen.this,Signin.class);
+//            startActivity(i);
+//        }
+//        else{
             //already logged in
             Intent i=new Intent(SplashScreen.this,MenuSelection.class);
             startActivity(i);
-        }
+//        }
         finish();
     }
 

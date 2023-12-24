@@ -67,6 +67,7 @@ public class Cart extends Fragment  {
     }
     private void showListItems(){
         FirebaseUser mAuth= FirebaseAuth.getInstance().getCurrentUser();
+        if(mAuth!=null){
         String id=mAuth.getUid();
         DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Cart/"+id);
         databaseReference.addChildEventListener(new ChildEventListener() {
@@ -109,7 +110,7 @@ public class Cart extends Fragment  {
 
             }
         });
-    }
+    }}
 //    @Override
 //    public void setTotalPrice(Double a){
 //        tvTotalPrice.setText("$ "+String.valueOf(a));
